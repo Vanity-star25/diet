@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Program Diet — Coquette Y2K</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400;1,600;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --pink-1:#ffe7f2;
+    --pink-2:#ffc7e1;
+    --pink-3:#ff9fcb;
+    --pink-4:#ff7fb8;
+    --rose:#ff4f9a;
+    --ink:#4b3a49;
+    --glass: rgba(255,255,255,.65);
+    --shadow: 0 20px 40px rgba(255, 127, 184, .25);
+    --ring: 0 0 0 3px rgba(255, 159, 203, .35);
+  }
+
+  /* Y2K coquette backdrop */
+  body{
+    margin:0;
+    min-height:100dvh;
+    background:
+      radial-gradient(60% 60% at 10% 10%, var(--pink-3) 0%, transparent 60%),
+      radial-gradient(50% 50% at 90% 20%, var(--pink-2) 0%, transparent 60%),
+      radial-gradient(40% 40% at 20% 90%, #ffd7ee 0%, transparent 60%),
+      linear-gradient(180deg, var(--pink-1), #fff);
+    color: var(--ink);
+    font-family: "Playfair Display", serif;
+    font-style: italic; /* requested */
+  }
+
+  .container{
+    max-width: 1100px;
+    margin: clamp(16px, 6vw, 48px) auto;
+    padding: 0 16px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+  .title{
+    font-size: clamp(28px, 5vw, 52px);
+    line-height: 1.05;
+    color: var(--rose);
+    text-shadow: 0 6px 24px rgba(255,79,154,.35);
+    letter-spacing:.5px;
+  }
+  .subtitle{
+    font-size: clamp(14px, 2.4vw, 18px);
+    color:#6f5468;
+    margin-top:8px;
+  }
+
+  /* Card */
+  .card{
+    background: linear-gradient(180deg, var(--glass), rgba(255,255,255,.85));
+    border: 1px solid rgba(255, 159, 203, .35);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: clamp(14px, 3.2vw, 22px);
+    backdrop-filter: blur(6px);
+  }
+
+  /* Grid */
+  .grid{
+    display:grid;
+    gap: clamp(14px, 2vw, 22px);
+  }
+  @media (min-width: 960px){
+    .grid{
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Inputs */
+  .row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  input[type="text"], input[type="number"], select, textarea{
+    flex:1 1 160px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border:1px solid rgba(255, 127, 184, .45);
+    background: #fff;
+    outline:none;
+    font-family: inherit;
+    font-style: italic;
+    transition: box-shadow .15s ease, transform .05s ease;
+  }
+  input:focus, select:focus, textarea:focus{
+    box-shadow: var(--ring);
+  }
+  textarea{ min-height: 72px; resize: vertical; }
+
+  .btn{
+    padding: 12px 16px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(90deg, var(--pink-4), var(--pink-3));
+    color:#fff;
+    font-weight: 600;
+    letter-spacing:.3px;
+    cursor:pointer;
+    box-shadow: 0 12px 24px rgba(255,127,184,.35);
+    transition: transform .06s ease, box-shadow .15s ease, filter .2s ease;
+    font-style: italic;
+  }
+  .btn:active{ transform: translateY(1px) scale(.99); }
+  .btn.ghost{
+    background: transparent;
+    color: var(--rose);
+    border:1px dashed var(--pink-4);
+    box-shadow: none;
+  }
+
+  /* Tables */
+  table{
+    width:100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    border-radius: 14px;
+    overflow:hidden;
+  }
+  thead th{
+    text-align:left;
+    background: linear-gradient(180deg, #fff, #ffeef7);
+    color:#644b5d;
+    padding:12px 14px;
+    border-bottom:1px solid #ffd3e9;
+  }
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px dashed #ffe1ef;
+  }
+  tbody tr:hover{
+    background:#fff7fb;
+  }
+  .muted{ color:#7b6072; font-size:.95em; }
+  .right{ text-align:right; }
+  .danger{
+    color:#b02d6e;
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    font-style: italic;
+  }
+
+  /* Totals pill */
+  .totals{
+    margin-top:12px;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 12px;
+    background: #fff;
+    border:1px solid #ffd3e9;
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  /* Week checklist */
+  .week{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:12px;
+  }
+  @media (min-width: 720px){
+    .week{ grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1040px){
+    .week{ grid-template-columns: repeat(7, 1fr); }
+  }
+  .day{
+    background:#fff;
+    border:1px solid #ffd3e9;
+    border-radius: 18px;
+    padding: 12px;
+  }
+  .day h4{
+    margin:0 0 8px;
+    color: var(--rose);
+    font-size: 1.05rem;
+  }
+  .task{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin: 6px 0;
+  }
+  .task input[type="checkbox"]{
+    accent-color: var(--pink-4);
+    width: 18px; height:18px;
+  }
+  .tiny{ font-size: .9rem; color:#6f5468; }
+
+  /* Cute accents */
+  .ribbon{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border:1px solid #ffd3e9;
+    box-shadow: 0 10px 20px rgba(255, 127, 184, .22);
+    margin: 0 auto 14px;
+  }
+  .heart{
+    width:18px; height:18px; display:inline-block;
+    background: radial-gradient(circle at 30% 30%, #fff 0 30%, transparent 31%) top left/50% 50% no-repeat,
+                radial-gradient(circle at 70% 30%, #fff 0 30%, transparent 31%) top right/50% 50% no-repeat,
+                linear-gradient(#fff, #fff) bottom/100% 52% no-repeat;
+    filter: drop-shadow(0 2px 6px rgba(255,79,154,.35));
+    mask: radial-gradient(circle at 25% 37%, #000 0 38%, transparent 39%) top left/50% 50% no-repeat,
+          radial-gradient(circle at 75% 37%, #000 0 38%, transparent 39%) top right/50% 50% no-repeat,
+          linear-gradient(#000, #000) bottom/100% 52% no-repeat;
+    -webkit-mask: radial-gradient(circle at 25% 37%, #000 0 38%, transparent 39%) top left/50% 50% no-repeat,
+          radial-gradient(circle at 75% 37%, #000 0 38%, transparent 39%) top right/50% 50% no-repeat,
+          linear-gradient(#000, #000) bottom/100% 52% no-repeat;
+    background-color: #ffb1d7;
+    border-radius:6px;
+  }
+
+  .footer{
+    text-align:center;
+    margin: 26px 0 4px;
+    color:#7b6072;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="ribbon">
+        <span class="heart" aria-hidden="true"></span>
+        <span class="tiny">Coquette Y2K Wellness</span>
+      </div>
+      <h1 class="title">Program Diet — Catat Kalori & Olahraga</h1>
+      <p class="subtitle">Tambah menu, jumlahkan kalori, catat kalori terbakar, dan checklist olahraga harian. Semua otomatis tersimpan di perangkat kamu.</p>
+    </header>
+
+    <div class="grid">
+      <!-- Kalori Makanan -->
+      <section class="card" id="foodCard" aria-labelledby="foodTitle">
+        <h2 id="foodTitle">Kalori Makanan</h2>
+        <div class="row" style="margin-top:8px;">
+          <input id="foodName" type="text" placeholder="Nama makanan/minuman (mis. Nasi Uduk)" />
+          <input id="foodKcal" type="number" inputmode="decimal" step="1" min="0" placeholder="Kalori (kcal)" />
+          <button class="btn" id="addFood">+ Tambah</button>
+          <button class="btn ghost" id="clearFood" title="Hapus semua makanan">Hapus Semua</button>
+        </div>
+
+        <table aria-label="Daftar makanan dan kalori">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th class="right">Kalori (kcal)</th>
+              <th class="right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="foodBody">
+            <!-- rows injected -->
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <div class="muted">Total Kalori Makanan</div>
+          <div><strong id="foodTotal">0</strong> kcal</div>
+        </div>
+      </section>
+
+      <!-- Kalori Terbakar -->
+      <section class="card" id="burnCard" aria-labelledby="burnTitle">
+        <h2 id="burnTitle">Kalori Terbakar</h2>
+        <div class="row" style="margin-top:8px;">
+          <input id="burnName" type="text" placeholder="Aktivitas (mis. Jogging 30 menit)" />
+          <input id="burnKcal" type="number" inputmode="decimal" step="1" min="0" placeholder="Kalori terbakar (kcal)" />
+          <button class="btn" id="addBurn">+ Tambah</button>
+          <button class="btn ghost" id="clearBurn" title="Hapus semua aktivitas">Hapus Semua</button>
+        </div>
+
+        <table aria-label="Daftar aktivitas dan kalori terbakar">
+          <thead>
+            <tr>
+              <th>Aktivitas</th>
+              <th class="right">Terbakar (kcal)</th>
+              <th class="right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="burnBody">
+            <!-- rows injected -->
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <div class="muted">Total Kalori Terbakar</div>
+          <div><strong id="burnTotal">0</strong> kcal</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Net -->
+    <section class="card" style="margin-top:16px;">
+      <div class="row">
+        <div class="muted">Neto Hari Ini (makanan − terbakar):</div>
+        <div style="margin-left:auto;font-weight:700;">
+          <span id="netKcal">0</span> kcal
+        </div>
+        <button class="btn ghost" id="resetAll" title="Reset semua data">Reset Semua Data</button>
+      </div>
+    </section>
+
+    <!-- Checklist Mingguan -->
+    <section class="card" style="margin-top:16px;" aria-labelledby="weekTitle">
+      <h2 id="weekTitle">Checklist Olahraga Mingguan</h2>
+      <p class="tiny">Centang target harian. Kamu bisa menulis catatan kecil di setiap hari.</p>
+      <div class="week" id="weekGrid">
+        <!-- days injected -->
+      </div>
+    </section>
+
+    <p class="footer tiny">♥ Simpan otomatis di perangkat (LocalStorage). Jaga konsistensi, hasil akan mengikuti.</p>
+  </div>
+
+<script>
+  /* ---------- Utilities ---------- */
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const pretty = n => Number(n || 0).toLocaleString('id-ID');
+
+  const store = {
+    get(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch{ return fallback; } },
+    set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+  };
+
+  /* ---------- Data ---------- */
+  const data = {
+    foods: store.get('foods', []),
+    burns: store.get('burns', []),
+    week: store.get('week', {
+      // 0..6 -> Senin..Minggu
+      days: Array.from({length:7}, () => ({
+        tasks: [
+          { label:'Cardio', done:false },
+          { label:'Strength', done:false },
+          { label:'Stretching', done:false },
+        ],
+        note: ''
+      }))
+    })
+  };
+
+  /* ---------- Rendering: Foods ---------- */
+  const foodBody = $('#foodBody');
+  const foodTotalEl = $('#foodTotal');
+  function renderFoods(){
+    foodBody.innerHTML = '';
+    let total = 0;
+    data.foods.forEach((it, idx) => {
+      total += Number(it.kcal)||0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(it.name||'—')}</td>
+        <td class="right">${pretty(it.kcal||0)}</td>
+        <td class="right">
+          <button class="danger" aria-label="Hapus item" data-type="food" data-idx="${idx}">hapus</button>
+        </td>`;
+      foodBody.appendChild(tr);
+    });
+    foodTotalEl.textContent = pretty(total);
+    updateNet();
+    store.set('foods', data.foods);
+  }
+
+  /* ---------- Rendering: Burns ---------- */
+  const burnBody = $('#burnBody');
+  const burnTotalEl = $('#burnTotal');
+  function renderBurns(){
+    burnBody.innerHTML = '';
+    let total = 0;
+    data.burns.forEach((it, idx) => {
+      total += Number(it.kcal)||0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(it.name||'—')}</td>
+        <td class="right">${pretty(it.kcal||0)}</td>
+        <td class="right">
+          <button class="danger" aria-label="Hapus aktivitas" data-type="burn" data-idx="${idx}">hapus</button>
+        </td>`;
+      burnBody.appendChild(tr);
+    });
+    burnTotalEl.textContent = pretty(total);
+    updateNet();
+    store.set('burns', data.burns);
+  }
+
+  /* ---------- Net ---------- */
+  const netEl = $('#netKcal');
+  function updateNet(){
+    const foods = Number((data.foods||[]).reduce((a,b)=>a+(+b.kcal||0),0));
+    const burns = Number((data.burns||[]).reduce((a,b)=>a+(+b.kcal||0),0));
+    netEl.textContent = pretty(foods - burns);
+  }
+
+  /* ---------- Add/Clear handlers ---------- */
+  $('#addFood').addEventListener('click', () => {
+    const name = $('#foodName').value.trim();
+    const kcal = +$('#foodKcal').value;
+    if(!name || isNaN(kcal)) return bump('#foodCard');
+    data.foods.push({name, kcal});
+    $('#foodName').value=''; $('#foodKcal').value='';
+    renderFoods();
+  });
+  $('#clearFood').addEventListener('click', () => {
+    if(confirm('Hapus semua makanan hari ini?')){ data.foods = []; renderFoods(); }
+  });
+
+  $('#addBurn').addEventListener('click', () => {
+    const name = $('#burnName').value.trim();
+    const kcal = +$('#burnKcal').value;
+    if(!name || isNaN(kcal)) return bump('#burnCard');
+    data.burns.push({name, kcal});
+    $('#burnName').value=''; $('#burnKcal').value='';
+    renderBurns();
+  });
+  $('#clearBurn').addEventListener('click', () => {
+    if(confirm('Hapus semua aktivitas?')){ data.burns = []; renderBurns(); }
+  });
+
+  // Row delete (event delegation)
+  document.body.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button.danger');
+    if(!btn) return;
+    const type = btn.dataset.type;
+    const idx = +btn.dataset.idx;
+    if(type==='food'){ data.foods.splice(idx,1); renderFoods(); }
+    if(type==='burn'){ data.burns.splice(idx,1); renderBurns(); }
+  });
+
+  // Reset all
+  $('#resetAll').addEventListener('click', ()=>{
+    if(!confirm('Reset semua data (makanan, terbakar, dan checklist)?')) return;
+    data.foods = [];
+    data.burns = [];
+    data.week = {
+      days: Array.from({length:7}, () => ({
+        tasks: [
+          { label:'Cardio', done:false },
+          { label:'Strength', done:false },
+          { label:'Stretching', done:false },
+        ],
+        note: ''
+      }))
+    };
+    renderFoods(); renderBurns(); renderWeek();
+  });
+
+  /* ---------- Week Checklist ---------- */
+  const weekNames = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+  const weekGrid = $('#weekGrid');
+
+  function renderWeek(){
+    weekGrid.innerHTML = '';
+    data.week.days.forEach((d, i) => {
+      const box = document.createElement('div');
+      box.className = 'day';
+      const tasksHtml = d.tasks.map((t, j) => `
+        <label class="task">
+          <input type="checkbox" data-day="${i}" data-task="${j}" ${t.done?'checked':''} />
+          <span>${escapeHtml(t.label)}</span>
+        </label>`).join('');
+      box.innerHTML = `
+        <h4>${weekNames[i]}</h4>
+        ${tasksHtml}
+        <textarea data-daynote="${i}" placeholder="Catatan ${weekNames[i]}...">${escapeHtml(d.note||'')}</textarea>
+      `;
+      weekGrid.appendChild(box);
+    });
+    store.set('week', data.week);
+  }
+
+  weekGrid.addEventListener('change', (e)=>{
+    const cb = e.target;
+    if(cb.matches('input[type="checkbox"][data-day]')){
+      const d = +cb.dataset.day, t = +cb.dataset.task;
+      data.week.days[d].tasks[t].done = cb.checked;
+      store.set('week', data.week);
+    }
+  });
+  weekGrid.addEventListener('input', (e)=>{
+    const ta = e.target;
+    if(ta.matches('textarea[data-daynote]')){
+      const d = +ta.dataset.daynote;
+      data.week.days[d].note = ta.value;
+      store.set('week', data.week);
+    }
+  });
+
+  /* ---------- Helpers ---------- */
+  function escapeHtml(str=''){
+    return String(str).replace(/[&<>"']/g, s=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[s]));
+  }
+  function bump(sel){
+    const el = document.querySelector(sel);
+    el.style.transform='translateY(-2px) scale(1.01)';
+    el.style.boxShadow='0 18px 40px rgba(255,127,184,.45)';
+    setTimeout(()=>{
+      el.style.transform='';
+      el.style.boxShadow='';
+    }, 180);
+  }
+
+  /* ---------- Init ---------- */
+  renderFoods();
+  renderBurns();
+  renderWeek();
+
+  // Enter to add (UX)
+  $('#foodKcal').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#addFood').click(); });
+  $('#burnKcal').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#addBurn').click(); });
+</script>
+</body>
+</html>
